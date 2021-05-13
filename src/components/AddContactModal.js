@@ -15,24 +15,29 @@ import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { withStyles } from '@material-ui/styles'
 
+const initialState = {
+    isLoading: false,
+    isFieldEmpty: false,
+    isEmailValid: true,
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    contactNumber: '',
+    emailAddress: '',
+}
+
 class AddContactModal extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            isLoading: false,
-            firstName: '',
-            middleName: '',
-            lastName: '',
-            contactNumber: '',
-            emailAddress: '',
-        }
+        this.state = initialState
     }
+
     handleSubmitForm = (e) => {
         e.preventDefault()
 
         this.setState({ isLoading: true })
 
-        // SIMPLE IMAGINARY VERIFICATION! I JUST POPUP A SIMPLE ALERT!
+        // SIMPLE IMAGINARY VALIDATAION! I JUST POPUP A SIMPLE ALERT!
         for (const props of Object.entries(this.props.contacts)) {
             if (props[1].firstName === this.state.firstName || props[1].contactNumber === this.state.contactNumber) {
                 alert('This contact is already exist!')
@@ -40,31 +45,51 @@ class AddContactModal extends Component {
                 return
             }
         }
+        if (!this.state.isEmailValid) {
+            alert('Please enter a valid Email Address!')
+            this.setState({ isLoading: false })
+            return
+        }
+        const { firstName, middleName, lastName, contactNumber, emailAddress } = this.state
+        if (!firstName || !middleName || !lastName || !contactNumber || !emailAddress) {
+            alert('Please fill up empty fields!')
+            this.setState({ isLoading: false })
+            return
+        }
 
+        // SET RANDOM ID
         const setId = (Math.random() * 1000000).toFixed()
         this.setState({ id: setId })
 
+        //
         setTimeout(() => {
             this.props.addContact(this.state)
             this.props.toggleModalShow()
-            this.setState({
-                isLoading: false,
-                firstName: '',
-                middleName: '',
-                lastName: '',
-                contactNumber: '',
-                emailAddress: '',
-            })
+            this.setState(initialState)
         }, 3000)
     }
+
     handleFieldChange = (e) => {
         this.setState({
             [e.target.name]: e.target.value,
         })
+
+        // THIS IS A BASIC EMAIL ADDRESS VERIRIFICATION, THIS IS JUST FOR SIMPLICITY AND DEMONSTRATION
+        if (!this.state.emailAddress.includes('@')) {
+            this.setState({ isEmailValid: false })
+        } else {
+            this.setState({ isEmailValid: true })
+        }
     }
+
+    hanleModalShow = () => {
+        this.props.toggleModalShow()
+        this.setState(initialState)
+    }
+
     render() {
-        const { classes, toggleModalShow, addContactModalShow } = this.props
-        const { firstName, middleName, lastName, contactNumber, emailAddress } = this.setState
+        const { classes, addContactModalShow } = this.props
+        const { firstName, middleName, lastName, contactNumber, emailAddress } = this.state
         return (
             <>
                 <Modal
@@ -72,7 +97,7 @@ class AddContactModal extends Component {
                     aria-describedby='transition-modal-description'
                     className={classes.modal}
                     open={addContactModalShow}
-                    onClose={toggleModalShow}
+                    onClose={this.hanleModalShow}
                     closeAfterTransition
                     BackdropComponent={Backdrop}
                     BackdropProps={{
@@ -85,7 +110,7 @@ class AddContactModal extends Component {
                             <form className={classes.form}>
                                 <TextField
                                     onChange={this.handleFieldChange}
-                                    defaultValue={firstName}
+                                    value={firstName}
                                     name='firstName'
                                     label='First Name'
                                     variant='outlined'
@@ -93,7 +118,7 @@ class AddContactModal extends Component {
                                 />
                                 <TextField
                                     onChange={this.handleFieldChange}
-                                    defaultValue={middleName}
+                                    value={middleName}
                                     name='middleName'
                                     label='Middle Name'
                                     variant='outlined'
@@ -101,7 +126,7 @@ class AddContactModal extends Component {
                                 />
                                 <TextField
                                     onChange={this.handleFieldChange}
-                                    defaultValue={lastName}
+                                    value={lastName}
                                     name='lastName'
                                     label='Last Name'
                                     variant='outlined'
@@ -109,7 +134,7 @@ class AddContactModal extends Component {
                                 />
                                 <TextField
                                     onChange={this.handleFieldChange}
-                                    defaultValue={contactNumber}
+                                    value={contactNumber}
                                     name='contactNumber'
                                     label='Contact Number'
                                     variant='outlined'
@@ -117,7 +142,7 @@ class AddContactModal extends Component {
                                 />
                                 <TextField
                                     onChange={this.handleFieldChange}
-                                    defaultValue={emailAddress}
+                                    value={emailAddress}
                                     name='emailAddress'
                                     label='Email Address'
                                     variant='outlined'

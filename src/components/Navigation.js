@@ -20,9 +20,9 @@ class Navigation extends Component {
         }
 
         if (window.confirm('Are you sure you want to delete all contacts?')) {
+            this.setState({ isLoading: false })
+            this.props.deleteAllContact()
             setTimeout(() => {
-                this.setState({ isLoading: false })
-                this.props.deleteAllContact()
                 alert('All contacts are succefully deleted!')
             })
         }
