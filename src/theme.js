@@ -8,15 +8,19 @@ const theme = createMuiTheme({
         fontFamily: 'Roboto, sans-serif',
     },
     overrides: {
-        // HEY! HEY! HEY! OVERRIDES HERE...
         MuiButton: {
             containedSecondary: {
-                backgroundColor: '#7d5fff',
+                backgroundColor: '#0be881',
             },
         },
         MuiAppBar: {
             colorPrimary: {
-                backgroundColor: '#218c74',
+                backgroundColor: '#1e272e',
+            },
+        },
+        MuiOutlinedInput: {
+            input: {
+                width: '300px',
             },
         },
     },
